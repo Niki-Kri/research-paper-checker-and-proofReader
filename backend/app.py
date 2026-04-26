@@ -1,3 +1,6 @@
+
+
+
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 
@@ -174,27 +177,54 @@ def detect_publisher(text):
         "Elsevier": 0
     }
 
+    # ---------------- IEEE signals ----------------
     if "ieee" in text:
-        scores["IEEE"] += 3
+        scores["IEEE"] += 4
+
     if "index terms" in text:
-        scores["IEEE"] += 2
+        scores["IEEE"] += 3
+
     if re.search(r"\[\d+\]", text):
+        scores["IEEE"] += 2   # citation style [1], [2]
+
+    if "doi.org" in text:
         scores["IEEE"] += 1
 
+    # ---------------- Springer signals ----------------
     if "springer" in text:
-        scores["Springer"] += 3
-    if "keywords:" in text:
+        scores["Springer"] += 4
+
+    if "keywords" in text:
+        scores["Springer"] += 2
+
+    if "the author(s)" in text and "springer" in text:
         scores["Springer"] += 1
 
+    # ---------------- Elsevier signals ----------------
     if "elsevier" in text:
-        scores["Elsevier"] += 3
+        scores["Elsevier"] += 4
+
     if "article history" in text:
+        scores["Elsevier"] += 3
+
+    if "available online" in text:
         scores["Elsevier"] += 2
 
-    best = max(scores, key=scores.get)
+    if "©" in text and "elsevier" in text:
+        scores["Elsevier"] += 1
 
-    if scores[best] == 0:
+    # ---------------- decision logic ----------------
+    best = max(scores, key=scores.get)
+    best_score = scores[best]
+
+    if best_score == 0:
         return "Unknown Format"
+
+    # handle tie (important fix)
+    top = [k for k, v in scores.items() if v == best_score]
+
+    if len(top) > 1:
+        return "Ambiguous Format"
 
     return best
 
