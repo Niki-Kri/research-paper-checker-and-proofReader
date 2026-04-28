@@ -1,1 +1,24 @@
-node_modules
+# ===== FRONTEND =====
+node_modules/
+dist/
+build/
+
+# ===== BACKEND =====
+__pycache__/
+*.pyc
+
+# ===== ENV FILES =====
+.env
+
+# ===== SYSTEM FILES =====
+.DS_Store
+Thumbs.db
+
+# ===== LOGS =====
+*.log
+
+# ===== VS CODE (optional) =====
+.vscode/
+
+# ===== PYTHON ENV =====
+venv/

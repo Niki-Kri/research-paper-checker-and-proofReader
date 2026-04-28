@@ -106,7 +106,7 @@ def get_pdf_doc(file_bytes):
     except Exception as e:
         print("PDF opening error:", e)
         return None
-
+[]
 
 def detect_title(text):
     lines = text.split("\n")
